@@ -1,0 +1,19 @@
+{
+  "name": "pasture",
+  "version": "0.0.0",
+  "description": "A utility for managing end-to-end test fixtures that require API interaction.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jj4th/pasture.git"
+  },
+  "author": "J.Andrichak",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jj4th/pasture/issues"
+  },
+  "homepage": "https://github.com/jj4th/pasture"
+}
