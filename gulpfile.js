@@ -11,7 +11,7 @@ gulp.task('lint', function () {
 
 gulp.task('test', function () {
     return gulp.src(['test/setup.js', 'test/**/*.spec.js'], {read: false})
-        .pipe(mocha());
+        .pipe(mocha({ timeout: 60000, slow: 15000 }));
 });
 
 gulp.task('default', ['lint', 'test'], function () {
