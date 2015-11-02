@@ -1,30 +1,16 @@
-require('babel/register')
+require('babel/register');
 
-var log = require('verbalize');
-var rp = require('request-promise');
-var secrets = require('../secrets');
+import rp from 'request-promise';
+import _ from 'lodash';
 
-const URL = {
-    STAGING: {
-        BASE: 'https://staging.encore.rackspace.com',
-        IDENTITY: 'https://staging.identity-internal.api.rackspacecloud.com/v2.0/tokens'
-    },
-
-    PREPROD: {
-        BASE: 'https://preprod.encore.rackspace.com',
-        IDENTITY: 'https://identity-internal.api.rackspacecloud.com/v2.0/tokens'
-    },
-
-    PROD: {
-        BASE: 'https://encore.rackspace.com',
-        IDENTITY: 'https://identity-internal.api.rackspacecloud.com/v2.0/tokens'
-    }
-}
+import secrets from '../secrets';
+import URL from './url';
 
 class Api {
     constructor(env) {
         // STAGING || PREPROD || PROD
-        this.env = env || 'PREPROD';
+        this.env = env || 'STAGING';
+        this.xAuthToken = null;
     }
 
     get token() {
@@ -35,12 +21,32 @@ class Api {
                 this._requestToken().then((data) => {
                     this.xAuthToken = data.access.token.id;
                     resolve(this.xAuthToken);
-                }).catch(function (err) {
-                    // todo what do we do here? blow up!
-                    reject(Error());
+                }).catch((err) => {
+                    reject(err);
                 });
             }
         });
+    }
+
+    createFixture(fixture) {
+        return this.token.then((token) => {
+            let request = {
+                method: fixture.method,
+                rejectUnauthorized: false,
+                url: fixture.url,
+                headers: {
+                    'X-Auth-Token': token
+                },
+                body: fixture.body,
+                json: true
+            }
+
+            return rp(request);
+        });
+    }
+
+    createFixtures(fixtures) {
+        return _.map(fixtures, this.createFixture.bind(this));
     }
 
     _requestToken() {
@@ -62,22 +68,6 @@ class Api {
                     }
                 }
             },
-            json: true
-        }
-
-        return rp(request);
-    }
-
-    createVolume(volume) {
-        let request = {
-            method: 'POST',
-            rejectUnauthorized: false,
-            // todo do we need to be able to configure the user or region?
-            url: URL[this.env].BASE + '/api/cloud/users/hub_cap/block_storage/ORD/volumes/',
-            headers: {
-                'X-Auth-Token': this.xAuthToken
-            },
-            body: volume,
             json: true
         }
 

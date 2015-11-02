@@ -1,8 +1,9 @@
+global.proxyquire = require('proxyquire').noCallThru();
 global.chai = require('chai');
 global.expect = global.chai.expect;
 global.sinon = require('sinon');
 global.sinonAsPromised = require('sinon-as-promised');
-// global.chai.use(require('sinon-chai'));
+global.chai.use(require('sinon-chai'));
 global.chai.use(require('chai-as-promised'));
 
 require('babel/register');

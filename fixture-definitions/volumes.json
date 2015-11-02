@@ -1,6 +1,0 @@
-{
-    "display_name": "00-pasture-test-volume",
-    "display_description": "I am a test volume.",
-    "size": 50,
-    "volume_type": "SSD"
-}
