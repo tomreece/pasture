@@ -1,5 +1,3 @@
-require('babel/register');
-
 import rp from 'request-promise';
 import _ from 'lodash';
 
@@ -9,23 +7,23 @@ import URL from './url';
 class Api {
     constructor(env) {
         // STAGING || PREPROD || PROD
-        this.env = env || 'STAGING';
-        this.xAuthToken = null;
+        this._env = env || 'STAGING';
+        this._token = null;
     }
 
     get token() {
-        return new Promise((resolve, reject) => {
-            if (this.xAuthToken) {
-                resolve(this.xAuthToken);
-            } else {
+        if (!this._token) {
+            this._token = new Promise((resolve, reject) => {
                 this._requestToken().then((data) => {
-                    this.xAuthToken = data.access.token.id;
-                    resolve(this.xAuthToken);
+                    this._token = data.access.token.id;
+                    resolve(this._token);
                 }).catch((err) => {
                     reject(err);
                 });
-            }
-        });
+            });
+        }
+
+        return this._token;
     }
 
     createFixture(fixture) {
@@ -52,7 +50,7 @@ class Api {
     _requestToken() {
         let request = {
             method: 'POST',
-            url: URL[this.env].IDENTITY,
+            url: URL[this._env].IDENTITY,
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
