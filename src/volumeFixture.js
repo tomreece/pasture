@@ -14,12 +14,14 @@ let volumeFixtures = [
         'size': 50,
         'volume_type': 'SSD'
     }),
+
     new VolumeFixture({
         'display_name': '01-pasture-test-volume',
         'display_description': 'I am a test volume.',
         'size': 50,
         'volume_type': 'SSD'
     }),
+
     new VolumeFixture({
         'display_name': '02-pasture-test-volume',
         'display_description': 'I am a test volume.',

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import fixtures from '../src/volumeFixture';
 
 describe('Api Class', () => {
-    let api, Api, rpStub;
+    let api, rpStub, Api;
 
     beforeEach(() => {
         rpStub = sinon.stub();
@@ -18,7 +18,15 @@ describe('Api Class', () => {
 
     describe('_requestToken', () => {
         it('should get a new token if it does not already have a token', () => {
-            rpStub.resolves({ access: { token: { id: 'f4k3t0k3n' }}});
+            let rpStubResponse = {
+                access: {
+                    token: {
+                        id: 'f4k3t0k3n'
+                    }
+                }
+            };
+
+            rpStub.resolves(rpStubResponse);
 
             let tokenPromise = api.token;
             expect(tokenPromise).to.eventually.equal('f4k3t0k3n');
@@ -27,7 +35,15 @@ describe('Api Class', () => {
         });
 
         it('should get a token only once', () => {
-            rpStub.resolves({ access: { token: { id: 'f4k3t0k3n' }}});
+            let rpStubResponse = {
+                access: {
+                    token: {
+                        id: 'f4k3t0k3n'
+                    }
+                }
+            };
+
+            rpStub.resolves(rpStubResponse);
 
             let tokenPromise = api.token;
             let otherTokenPromise = api.token;
@@ -42,11 +58,24 @@ describe('Api Class', () => {
         });
     });
 
-    describe.skip('createFixture', () => {
-        it('should create a volume', () => {
-            return api.createFixture(fixtures[0]).then((response) => {
-                return expect(response.volume.status).to.equal('creating');
+    describe('createFixture', () => {
+        beforeEach(() => {
+            // manually set the _token so rpStub won't be called
+            api._token = new Promise((resolve, reject) => {
+                resolve('f4k3t0k3n');
             });
+        });
+
+        it('should create a volume', () => {
+            let rpStubResponse = {
+                volume: {
+                    status: 'creating'
+                }
+            };
+
+            rpStub.resolves(rpStubResponse);
+
+            return expect(api.createFixture(fixtures[0])).to.eventually.equal(rpStubResponse);
         });
     });
 
