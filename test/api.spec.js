@@ -53,14 +53,14 @@ describe('Api Class', () => {
 
         it('should error if requesting a token fails', () => {
             rpStub.throws();
-
             return expect(api.token).to.be.rejected;
         });
     });
 
     describe('createFixture', () => {
         beforeEach(() => {
-            // manually set the _token so rpStub won't be called
+            // manually set the _token so rpStub won't be called when api.token
+            // is called
             api._token = new Promise((resolve, reject) => {
                 resolve('f4k3t0k3n');
             });
@@ -75,7 +75,22 @@ describe('Api Class', () => {
 
             rpStub.resolves(rpStubResponse);
 
-            return expect(api.createFixture(fixtures[0])).to.eventually.equal(rpStubResponse);
+            let assertRequest = {
+                method: fixtures[0].method,
+                rejectUnauthorized: false,
+                url: fixtures[0].url,
+                headers: {
+                    'X-Auth-Token': 'f4k3t0k3n'
+                },
+                body: fixtures[0].body,
+                json: true
+            };
+
+            return api.createFixture(fixtures[0]).then((response) => {
+                expect(rpStub).to.have.been.calledWith(assertRequest);
+                expect(rpStub).to.have.been.calledOnce;
+                expect(response).to.equal(rpStubResponse);
+            })
         });
     });
 

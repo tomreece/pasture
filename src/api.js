@@ -37,7 +37,7 @@ class Api {
                 },
                 body: fixture.body,
                 json: true
-            }
+            };
 
             return rp(request);
         });
