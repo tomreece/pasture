@@ -28,7 +28,7 @@ describe('Api Class', () => {
 
             rpStub.resolves(rpStubResponse);
 
-            let tokenPromise = api.token;
+            let tokenPromise = api.getToken();
             expect(tokenPromise).to.eventually.equal('f4k3t0k3n');
             expect(rpStub).to.have.been.calledOnce;
             return tokenPromise;
@@ -45,21 +45,21 @@ describe('Api Class', () => {
 
             rpStub.resolves(rpStubResponse);
 
-            let tokenPromise = api.token;
-            let otherTokenPromise = api.token;
+            let tokenPromise = api.getToken();
+            let otherTokenPromise = api.getToken();
             expect(rpStub).to.have.been.calledOnce;
             return tokenPromise;
         });
 
         it('should error if requesting a token fails', () => {
             rpStub.throws();
-            return expect(api.token).to.be.rejected;
+            return expect(api.getToken()).to.be.rejected;
         });
     });
 
     describe('createFixture', () => {
         beforeEach(() => {
-            // manually set the _token so rpStub won't be called when api.token
+            // manually set the _token so rpStub won't be called when api.getToken()
             // is called
             api._token = new Promise((resolve, reject) => {
                 resolve('f4k3t0k3n');

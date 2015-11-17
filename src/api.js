@@ -11,7 +11,7 @@ class Api {
         this._token = null;
     }
 
-    get token() {
+    getToken() {
         if (!this._token) {
             this._token = new Promise((resolve, reject) => {
                 this._requestToken().then((data) => {
@@ -27,7 +27,7 @@ class Api {
     }
 
     createFixture(fixture) {
-        return this.token.then((token) => {
+        return this.getToken().then((token) => {
             let request = {
                 method: fixture.method,
                 rejectUnauthorized: false,
